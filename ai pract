@@ -1,0 +1,334 @@
+a=0
+b=0
+
+print("Initial State: ",a,b)
+
+while b!=2:
+    if b==0:
+        b=3
+        print(a,b)
+    elif a==4:
+        a=0
+        print(a,b)
+    else:
+        transfer=min(b,4-a)
+        a=a+transfer
+        b=b-transfer
+        print(a,b)
+
+print("Goal Reached: 2 liters")
+
+
+from queue import Queue
+
+start=[1,2,3,4,0,6,7,5,8]
+goal=[1,2,3,4,5,6,7,8,0]
+
+print("Initial State: ")
+for i in range(0,9,3):
+    print(start[i:i+3])
+
+
+print("Goal State: ")
+for i in range(0,9,3):
+    print(goal[i:i+3])
+
+
+
+
+graph={'A':['B','C'],
+       'B':['D','E'],
+       'C':['F'],
+       'D':[],
+       'E':[],
+       'F':[]
+}
+
+visited=[]
+stack=['A']
+print("Depth First Search: ")
+while stack:
+    node=stack.pop()
+    
+    if node not in visited:
+        print(node, end=" ")
+        visited.append(node)
+        
+        for neighbour in reversed(graph[node]):
+            stack.append(neighbour)
+
+
+
+
+values=[10,15,12,20,18]
+
+def hc(values):
+    current=values[0]
+    for value in values:
+        if value>current:
+            current=value
+    return current
+
+best=hc(values)
+print("Best value Found: ",best)
+
+
+
+
+simulated annealing
+
+import random
+import math
+
+values=[10,15,12,20,18]
+current=0
+temp=100
+
+while temp>1:
+    nextstate=random.randint(0, len(values)-1)
+    
+    if values[nextstate]>values[current]:
+        current=nextstate
+    else:
+        probability=math.exp((values[nextstate]-values[current])/temp)
+        
+        if random.random()<probability:
+            current=nextstate
+            
+    temp=temp*0.9
+
+print("Best value found: ", values[current])
+
+
+
+
+A*
+
+graph={
+    'A':{'B':1,'C':4},
+    'B':{'D':2,'E':5},
+    'C':{'F':3},
+    'D':{},
+    'E':{'G':2},
+    'F':{'G':2},
+    'G':{},
+}
+
+h={
+    'A':5,'B':4,'C':3,'D':4,'E':2,'F':1,'G':0
+}
+
+openlist=['A']
+cost={'A':0}
+parent={}
+
+while openlist:
+    n=min(openlist,key=lambda x: cost[x]+h[x])
+    openlist.remove(n)
+    
+    if n=='G':
+        break
+    
+    for v in graph[n]:
+        c= cost[n] + graph[n][v]
+        if v not in cost or c < cost[v]:
+            cost[v]=c
+            parent[v]=n
+            if v not in openlist:
+                openlist.append(v)
+
+path=['G']
+while path[-1] != 'A':
+    path.append(parent[path[-1]])
+path.reverse()
+
+print("Shortest Path: ",path)
+print("Total Cost: ",cost['G'])
+
+
+
+queen
+
+n=4
+board=[-1]*n
+
+def solve(row):
+    if row==n:
+        return True
+    
+    for col in range(n):
+        safe=True
+        
+        for r in range(row):
+            if board[r]==col or abs(board[r]-col)==row-r:
+                safe=False
+        
+        if safe:
+            board[row]=col
+            if solve(row+1):
+                return True
+    return False
+
+solve(0)
+
+print("Solution: ")
+for row in range(n):
+    for col in range(n):
+        if board[row]==col:
+            print("Q", end=" ")
+        else:
+            print("_", end=" ")
+    print()
+
+
+
+
+map color
+
+colors=['Red','Green','Blue']
+
+graph={
+    'A':['B','C'],
+    'B':['A','C','D'],
+    'C':['A','B','D'],
+    'D':['B','C']
+}
+
+color={}
+
+for region in graph:
+    for c in colors:
+        safe=True
+        
+        for neighbour in graph[region]:
+            if color.get(neighbour)==c:
+                safe=False
+        
+        if safe:
+            color[region]=c
+            break
+
+print("Map Coloring:")
+print(color)
+
+
+
+alpha beta pruniong
+
+def ab(depth, node, maximizing, values, alpha, beta):
+    if depth == 3:
+        return values[node]
+
+    if maximizing:
+        best = -999
+        for i in range(2):
+            value = ab(depth+1, node*2+i, False,
+                       values, alpha, beta)
+            best = max(best, value)
+            alpha = max(alpha, best)
+            if beta <= alpha:
+                break
+        return best
+
+    else:
+        best = 999
+        for i in range(2):
+            value = ab(depth+1, node*2+i, True,
+                       values, alpha, beta)
+            best = min(best, value)
+            beta = min(beta, best)
+            if beta <= alpha:
+                break
+        return best
+
+values = [3, 5, 9, 6, 1, 2, 0, -1]
+result = ab(0, 0, True, values, -999, 999)
+print("Optimal value:", result)
+
+
+
+
+linera regression
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+X = np.array([[1], [2], [3], [4], [5]])
+Y = np.array([2, 4, 5, 4, 5])
+
+model = LinearRegression()
+model.fit(X, Y)
+
+prediction = model.predict([[6]])
+
+print("Predicted value:", prediction[0])
+print("Slope:", model.coef_[0])
+print("Intercept:", model.intercept_)
+
+plt.scatter(X, Y, color='blue')
+plt.plot(X, model.predict(X), color='red')
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.title("Linear Regression")
+plt.show()
+
+
+
+classification
+
+from sklearn.neighbors import KNeighborsClassifier
+
+X = [[150], [170], [140], [180], [160]]
+Y = ['Apple', 'Orange', 'Apple', 'Orange', 'Apple']
+
+model = KNeighborsClassifier(n_neighbors=3)
+model.fit(X, Y)
+
+prediction = model.predict([[175]])
+
+print("Predicted class:", prediction[0])
+
+
+two class
+
+from sklearn.linear_model import LogisticRegression
+
+X = [[1], [2], [3], [4], [5], [6]]
+Y = ['Fail', 'Fail', 'Fail', 'Pass', 'Pass', 'Pass']
+
+model = LogisticRegression()
+model.fit(X, Y)
+
+hours = [[5]]
+prediction = model.predict(hours)
+
+if prediction[0] == 'Pass':
+    print("Student will pass")
+else:
+    print("Student will fail")
+
+
+
+multi class
+
+from sklearn.linear_model import LogisticRegression
+
+X = [[4, 2], [5, 3], [6, 4], [7, 5], [5, 4], [6, 5]]
+Y = ['Versicolor', 'Versicolor', 'Versicolor',
+     'Virginica', 'Virginica', 'Virginica']
+
+model = LogisticRegression()
+model.fit(X, Y)
+
+prediction = model.predict([[6, 4]])
+
+if prediction[0] == 'Versicolor':
+    print("Flower = Versicolor")
+else:
+    print("Flower = Virginica")
+
+
+
+
+py -m pip install numpy matplotlib scikit-learn
